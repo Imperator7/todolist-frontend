@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const TodoSchema = z.object({
   id: z.uuid(),
-  task: z.string().min(1, 'Title is required'),
+  title: z.string().min(1, 'Title is required'),
   completed: z.boolean().default(false),
 })
 export const TodosSchema = z.array(TodoSchema)
