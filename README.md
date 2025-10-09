@@ -1,73 +1,91 @@
-# React + TypeScript + Vite
+# 📋 Todo List — Frontend Developer Test
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple **Todo List** application built with **React + TypeScript + Vite**, using **React Query** for server state management, **Context API** for data/actions, and **MSW** for realistic API mocking.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## React Compiler
+- Fetch & display todos from an API
+- Add new todos
+- Edit todo titles
+- Toggle completion state (done / undone)
+- Delete todos
+- Proper loading & error states
+- **React (functional) + TypeScript**
+- **React Query** for fetching and mutations
+- **Context API** for data & actions (no prop drilling)
+- **MSW** (Mock Service Worker) simulates backend endpoints
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
+# Vite dev server: http://localhost:5173
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+MSW is automatically initialized on startup (no `.env` setup required).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📦 Tech Stack
+
+- **React + TypeScript** — UI & type safety
+- **TanStack Query (React Query)** — Server state management
+- **React Context API** — Share data/actions across components
+- **MSW (Mock Service Worker)** — Network-level API mocking
+
+---
+
+## 🔌 Mock API Endpoints
+
+### Response Format
+
+- ✅ Success:
+
+  ```json
+  { "ok": true, "data": ... }
+  ```
+
+- ❌ Error:
+  ```json
+  { "ok": false, "error": "message" }
+  ```
+
+### Endpoints
+
+**GET** `/api/todos`  
+→ `{ "ok": true, "data": { "todos": Todo[] } }`
+
+**POST** `/api/todos`  
+Body:
+
+```json
+{ "title": "Buy milk" }
 ```
+
+→ `{ "ok": true, "data": Todo }`
+
+**PATCH** `/api/todos/:id`  
+Body (any subset, at least one):
+
+```json
+{ "title": "New title", "completed": true }
+```
+
+→ `{ "ok": true, "data": Todo }`
+
+**DELETE** `/api/todos/:id`  
+→ `{ "ok": true, "data": { "deletedId": "string" } }`
+
+---
+
+## 🔮 Future Improvements
+
+- Optimistic updates with rollback
+- Zod schema validation for API responses
+- Toast notifications for success/error feedback
+- Component & E2E tests (React Testing Library + MSW)
