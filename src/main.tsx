@@ -5,7 +5,7 @@ import './index.css'
 import App from './App.tsx'
 
 const prepare = async () => {
-  const { worker } = await import('./lib/msw/browser.ts')
+  const { worker } = await import('./mocks/browser.ts')
 
   await worker.start()
 }

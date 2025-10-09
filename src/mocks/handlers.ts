@@ -5,7 +5,7 @@ import type {
   TodoPatchInput,
   Todo,
   Todos,
-} from '../../features/todos/schemas/todo'
+} from '../features/todos/schemas/todo'
 
 let todos: Todos = [
   {
