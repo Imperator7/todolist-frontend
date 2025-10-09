@@ -2,17 +2,15 @@ import type { Todo, Todos } from '../schemas/todo'
 import { useState, useEffect } from 'react'
 import TodoItem from './TodoItem'
 import AddTodoInput from './AddTodoInput'
-import { http } from '../../../lib/http'
+import { TodosService } from '../services/todos.service'
 
 const TodoList = () => {
   const [todos, setTodos] = useState<Todos>([])
 
   useEffect(() => {
     ;(async () => {
-      const res = await http('/api/todos')
-      const body = await res.json()
-
-      setTodos(body.data)
+      const data = await TodosService.list()
+      setTodos(data)
     })()
   }, [])
 
