@@ -47,7 +47,7 @@ MSW is automatically initialized on startup (no `.env` setup required).
 - ✅ Success:
 
   ```json
-  { "ok": true, "data": ... }
+  { "ok": true, "data": "..." }
   ```
 
 - ❌ Error:
@@ -70,7 +70,7 @@ Body:
 → `{ "ok": true, "data": Todo }`
 
 **PATCH** `/api/todos/:id`  
-Body (any subset, at least one):
+Body: (any subset, at least one)
 
 ```json
 { "title": "New title", "completed": true }
