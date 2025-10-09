@@ -63,7 +63,7 @@ export const handlers = [
       )
     }
 
-    todos.unshift(item)
+    todos.push(item)
 
     return HttpResponse.json({ ok: true, data: item }, { status: 201 })
   }),
@@ -84,16 +84,20 @@ export const handlers = [
     const newTitle = body.title
     const toggleCompleted = body.toggleCompleted
 
-    if (!newTitle || newTitle.trim() === '') {
+    if (newTitle === undefined && toggleCompleted !== true) {
       return HttpResponse.json(
-        { ok: false, error: "Title can't be blank" },
+        { ok: false, error: 'Nothing to update' },
         { status: 400 }
       )
     }
 
-    const changedTodo = {
+    let changedTodo = {
       ...targetTodo,
-      title: newTitle,
+    }
+
+    if (newTitle !== undefined) {
+      const trimmed = newTitle.trim()
+      changedTodo = { ...changedTodo, title: trimmed as string }
     }
 
     if (toggleCompleted) {
