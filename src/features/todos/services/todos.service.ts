@@ -28,7 +28,9 @@ export const TodosService = {
     return res.data
   },
   toggleCompleted: async (id: string): Promise<Todo> => {
-    const res = await patch<ApiResult<Todo>>(`${BASE}/${id}`)
+    const res = await patch<ApiResult<Todo>>(`${BASE}/${id}`, {
+      body: { toggleCompleted: true },
+    })
     if (!res.ok) {
       throw new Error(res.error)
     }
