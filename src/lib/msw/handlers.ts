@@ -1,12 +1,13 @@
 import { delay, http, HttpResponse } from 'msw'
 
 import type {
-  CreateTodoInput,
+  TodoCreateInput,
+  TodoPatchInput,
   Todo,
   Todos,
 } from '../../features/todos/schemas/todo'
 
-const todos: Todos = [
+let todos: Todos = [
   {
     id: crypto.randomUUID(),
     title: 'finish the job',
@@ -39,10 +40,19 @@ export const handlers = [
 
   http.post('/api/todos', async ({ request }) => {
     await delay(200)
-    const body: CreateTodoInput = (await request.json()) as CreateTodoInput
+    const body: TodoCreateInput = (await request.json()) as TodoCreateInput
+    const title = body.title
+
+    if (title.trim() === '') {
+      return HttpResponse.json(
+        { ok: false, error: "Title can't be blank" },
+        { status: 400 }
+      )
+    }
+
     const item: Todo = {
       id: crypto.randomUUID(),
-      title: body.title,
+      title: title,
       completed: false,
     }
 
@@ -56,5 +66,66 @@ export const handlers = [
     todos.unshift(item)
 
     return HttpResponse.json({ ok: true, data: item }, { status: 201 })
+  }),
+
+  http.patch('/api/todos/:id', async ({ request, params }) => {
+    await delay(200)
+    const id = params.id
+    const targetTodo = todos.find((todo) => todo.id === id)
+
+    if (!targetTodo) {
+      return HttpResponse.json(
+        { ok: false, error: 'Task Not Found' },
+        { status: 404 }
+      )
+    }
+
+    const body: TodoPatchInput = (await request.json()) as TodoPatchInput
+    const newTitle = body.title
+    const toggleCompleted = body.toggleCompleted
+
+    if (!newTitle || newTitle.trim() === '') {
+      return HttpResponse.json(
+        { ok: false, error: "Title can't be blank" },
+        { status: 400 }
+      )
+    }
+
+    const changedTodo = {
+      ...targetTodo,
+      title: newTitle,
+    }
+
+    if (toggleCompleted) {
+      changedTodo.completed = !changedTodo.completed
+    }
+
+    todos = todos.map((todo) => (todo.id === id ? changedTodo : todo))
+    return HttpResponse.json({ ok: true, data: changedTodo }, { status: 200 })
+  }),
+
+  http.delete('/api/todos/:id', async ({ params }) => {
+    await delay(200)
+    const id = params.id
+
+    const before = todos.length
+    todos = todos.filter((todo) => todo.id !== id)
+
+    if (todos.length === before) {
+      return HttpResponse.json(
+        { ok: false, error: 'Task Not Found' },
+        { status: 404 }
+      )
+    }
+
+    return HttpResponse.json(
+      {
+        ok: true,
+        data: {
+          deletedId: id,
+        },
+      },
+      { status: 200 }
+    )
   }),
 ]
