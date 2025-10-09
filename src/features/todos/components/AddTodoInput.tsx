@@ -1,14 +1,13 @@
 import { useState } from 'react'
+import { useTodosActions } from '../hooks/queryHooks'
 
-type AddTodoInputProps = {
-  handleAddTodo: (title: string) => void
-}
-
-const AddTodoInput = ({ handleAddTodo }: AddTodoInputProps) => {
+const AddTodoInput = () => {
   const [newTodo, setNewTodo] = useState<string>('')
 
-  const handleAdd = () => {
-    handleAddTodo(newTodo)
+  const { create } = useTodosActions()
+
+  const handleAdd = async () => {
+    create(newTodo)
     setNewTodo('')
   }
 

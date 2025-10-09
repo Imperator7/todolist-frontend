@@ -1,26 +1,19 @@
 import { useState } from 'react'
 import type { Todo } from '../schemas/todo'
+import { useTodosActions } from '../hooks/queryHooks'
 
-type TodoItemProps = Todo & {
-  handleCheck: (id: string) => void
-  handleEditTitle: (id: string, title: string) => void
-  handleDel: (id: string) => void
-}
+type TodoItemProps = Todo
 
-const TodoItem = ({
-  id,
-  title,
-  completed,
-  handleCheck,
-  handleEditTitle,
-  handleDel,
-}: TodoItemProps) => {
+const TodoItem = ({ id, title, completed }: TodoItemProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [newTitle, setNewTitle] = useState<string>(title)
 
+  const TodosService = useTodosActions()
+
   const handleConfirm = () => {
-    handleEditTitle(id, newTitle)
+    TodosService.editTitle(id, newTitle)
     setIsEditing(!isEditing)
+    setNewTitle(title)
   }
 
   const handleCancel = () => {
@@ -32,6 +25,14 @@ const TodoItem = ({
     setIsEditing(!isEditing)
   }
 
+  const handleCheck = () => {
+    TodosService.toggleCompleted(id)
+  }
+
+  const handleDel = () => {
+    TodosService.remove(id)
+  }
+
   return (
     <li className="flex flex-wrap gap-4 justify-between w-full ">
       <div className="flex gap-2 items-center">
@@ -39,7 +40,7 @@ const TodoItem = ({
           type="checkbox"
           name="completed"
           checked={completed}
-          onChange={() => handleCheck(id)}
+          onChange={handleCheck}
           className="h-5 w-5 accent-amber-200"
         />
         {isEditing ? (
@@ -74,7 +75,7 @@ const TodoItem = ({
           <button className="btn bg-green-600" onClick={handleToggleEdit}>
             Edit
           </button>
-          <button className="btn bg-red-600" onClick={() => handleDel(id)}>
+          <button className="btn bg-red-600" onClick={handleDel}>
             Del
           </button>
         </div>
