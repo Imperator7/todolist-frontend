@@ -84,7 +84,7 @@ export const handlers = [
     const newTitle = body.title
     const toggleCompleted = body.toggleCompleted
 
-    if (newTitle === undefined && toggleCompleted !== true) {
+    if (newTitle?.trim() === '' && toggleCompleted !== true) {
       return HttpResponse.json(
         { ok: false, error: 'Nothing to update' },
         { status: 400 }
