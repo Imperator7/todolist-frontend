@@ -14,7 +14,7 @@ const TodoList = ({ todos, isLoading }: TodoListProps) => {
       ) : todos.length === 0 ? (
         <p>No task left</p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-2 overflow-y-auto pr-2 max-h-[75vh]">
           {todos.map((todo) => (
             <TodoItem key={todo.id} {...todo} />
           ))}
