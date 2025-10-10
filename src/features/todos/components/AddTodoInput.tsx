@@ -1,19 +1,21 @@
 import { useState } from 'react'
 import { useTodosActions } from '../hooks/queryHooks'
+import { IoMdAdd } from 'react-icons/io'
 
 const AddTodoInput = () => {
   const [newTodo, setNewTodo] = useState<string>('')
 
   const { create } = useTodosActions()
 
-  const handleAdd = async () => {
+  const handleAdd = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
     if (newTodo.trim() === '') return
     create(newTodo)
     setNewTodo('')
   }
 
   return (
-    <div className="flex gap-4">
+    <form onSubmit={handleAdd} className="flex gap-4">
       <input
         type="text"
         placeholder="Add new task here"
@@ -21,10 +23,10 @@ const AddTodoInput = () => {
         value={newTodo}
         onChange={(e) => setNewTodo(e.target.value)}
       />
-      <button className="btn bg-amber-400" onClick={handleAdd}>
-        Add
+      <button className="btn bg-amber-400" type="submit">
+        <IoMdAdd size={20} />
       </button>
-    </div>
+    </form>
   )
 }
 

@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import type { Todo } from '../schemas/todo'
 import { useTodosActions } from '../hooks/queryHooks'
+import { CiEdit } from 'react-icons/ci'
+import { RiDeleteBinFill, RiCheckFill, RiCloseFill } from 'react-icons/ri'
 
 type TodoItemProps = Todo
+
+const ICON_SIZE = 20
 
 const TodoItem = ({ id, title, completed }: TodoItemProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -10,7 +14,7 @@ const TodoItem = ({ id, title, completed }: TodoItemProps) => {
 
   const TodosService = useTodosActions()
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     TodosService.editTitle(id, newTitle)
     setIsEditing(!isEditing)
     setNewTitle(title)
@@ -34,14 +38,14 @@ const TodoItem = ({ id, title, completed }: TodoItemProps) => {
   }
 
   return (
-    <li className="flex flex-wrap gap-4 justify-between w-full ">
-      <div className="flex gap-2 items-center">
+    <li className="flex gap-4 justify-between w-full ">
+      <div className="flex gap-2 items-center max-w-50 md:max-w-150">
         <input
           type="checkbox"
           name="completed"
           checked={completed}
           onChange={handleCheck}
-          className="h-5 w-5 accent-amber-200"
+          className=" accent-amber-200 caret-transparent"
         />
         {isEditing ? (
           <input
@@ -53,7 +57,7 @@ const TodoItem = ({ id, title, completed }: TodoItemProps) => {
         ) : (
           <p
             className={[
-              'text-xl text-center',
+              'text-xl text-center break-words w-full',
               completed && 'line-through',
             ].join(' ')}
           >
@@ -62,21 +66,21 @@ const TodoItem = ({ id, title, completed }: TodoItemProps) => {
         )}
       </div>
       {isEditing ? (
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-1 md:gap-4 items-center">
           <button className="btn bg-green-600" onClick={handleConfirm}>
-            confirm
+            <RiCheckFill size={ICON_SIZE} />
           </button>
           <button className="btn bg-red-600" onClick={handleCancel}>
-            Cancel
+            <RiCloseFill size={ICON_SIZE} />
           </button>
         </div>
       ) : (
-        <div className="flex gap-4 items-center">
-          <button className="btn bg-green-600" onClick={handleToggleEdit}>
-            Edit
+        <div className="flex gap-1 md:gap-4 items-center">
+          <button className="btn bg-blue-600" onClick={handleToggleEdit}>
+            <CiEdit size={ICON_SIZE} />
           </button>
           <button className="btn bg-red-600" onClick={handleDel}>
-            Del
+            <RiDeleteBinFill size={ICON_SIZE} />
           </button>
         </div>
       )}
