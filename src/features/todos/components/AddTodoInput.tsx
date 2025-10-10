@@ -7,6 +7,7 @@ const AddTodoInput = () => {
   const { create } = useTodosActions()
 
   const handleAdd = async () => {
+    if (newTodo.trim() === '') return
     create(newTodo)
     setNewTodo('')
   }
