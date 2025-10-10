@@ -11,7 +11,7 @@ export type Todo = z.infer<typeof TodoSchema>
 export type Todos = Todo[]
 
 export const TodoCreateSchema = z.object({
-  title: z.string().trim().min(1, 'Title is required'),
+  title: z.string().trim().min(1, 'Title is required').max(20, 'Max 20 chars'),
 })
 export const TodoPatchSchema = z.object({
   title: z.string().trim().min(1, "Title can't be blank").optional(),
