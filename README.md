@@ -12,6 +12,7 @@ A simple **Todo List** application built with **React + TypeScript + Vite**, usi
 - Toggle completion state (done / undone)
 - Delete todos
 - Proper loading & error states
+- Optimistic updates with rollback
 - **React (functional) + TypeScript**
 - **React Query** for fetching and mutations
 - **Context API** for data & actions (no prop drilling)
@@ -85,7 +86,5 @@ Body: (any subset, at least one)
 
 ## 🔮 Future Improvements
 
-- Optimistic updates with rollback
-- Zod schema validation for API responses
 - Toast notifications for success/error feedback
 - Component & E2E tests (React Testing Library + MSW)
