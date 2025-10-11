@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import type { ReactNode } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -18,6 +18,10 @@ export function TodosProvider({ children }: { children: ReactNode }) {
     queryKey: TODOS_QK,
     queryFn: () => TodosService.list(),
   })
+
+  function replaceById(list: Todos | undefined, next: Todo): Todos | undefined {
+    return list ? list.map((t) => (t.id === next.id ? next : t)) : list
+  }
 
   const createMut = useMutation({
     mutationFn: (title: string) => TodosService.create(title),
@@ -56,6 +60,10 @@ export function TodosProvider({ children }: { children: ReactNode }) {
     },
   })
 
+  const seqRef = useRef(0)
+  const latestOpRef = useRef(new Map<string, number>())
+  const lastSuccessRef = useRef(new Map<string, { opId: number; todo: Todo }>())
+
   const editTitleMut = useMutation({
     mutationFn: ({ id, title }: { id: string; title: string }) =>
       TodosService.editTitle(id, title),
@@ -63,21 +71,51 @@ export function TodosProvider({ children }: { children: ReactNode }) {
       await qc.cancelQueries({ queryKey: TODOS_QK })
       const prev = qc.getQueryData<Todos>(TODOS_QK)
 
+      const opId = ++seqRef.current
+      latestOpRef.current.set(id, opId)
+
       qc.setQueryData<Todos>(TODOS_QK, (curr) =>
         curr
           ? curr.map((t) => (t.id === id ? { ...t, title: title } : t))
           : curr
       )
 
-      return { prev }
+      return { prev, id, opId }
     },
 
     onError(_err, _vars, ctx) {
-      if (ctx?.prev) qc.setQueryData(TODOS_QK, ctx.prev)
+      if (!ctx) return
+
+      if (latestOpRef.current.get(ctx.id) === ctx.opId) return
+
+      const lastOk = lastSuccessRef.current.get(ctx.id)
+
+      if (lastOk) {
+        qc.setQueryData<Todos>(TODOS_QK, (curr) =>
+          replaceById(curr, lastOk.todo)
+        )
+      } else if (ctx.prev) {
+        qc.setQueryData(TODOS_QK, ctx.prev)
+      }
     },
 
-    onSettled() {
-      qc.invalidateQueries({ queryKey: TODOS_QK })
+    onSuccess(todo, _vars, ctx) {
+      if (!ctx) return
+
+      const last = lastSuccessRef.current.get(ctx.id)
+      if (!last || ctx.opId > last.opId) {
+        lastSuccessRef.current.set(ctx.id, { opId: ctx.opId, todo: todo })
+      }
+
+      if (latestOpRef.current.get(ctx.id) === ctx.opId) {
+        qc.setQueryData<Todos>(TODOS_QK, (curr) => replaceById(curr, todo))
+      }
+    },
+
+    onSettled(_data, _err, _vars, ctx) {
+      if (ctx && latestOpRef.current.get(ctx.id) === ctx.opId) {
+        qc.invalidateQueries({ queryKey: TODOS_QK })
+      }
     },
   })
 
