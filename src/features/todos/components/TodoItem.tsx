@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Todo } from '../schemas/todo'
 import { useTodosActions } from '../hooks/queryHooks'
 import { CiEdit } from 'react-icons/ci'
@@ -10,18 +10,18 @@ const ICON_SIZE = 20
 
 const TodoItem = ({ id, title, completed }: TodoItemProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [newTitle, setNewTitle] = useState<string>(title)
+  const [inputTitle, setInputTitle] = useState<string>(title)
 
   const TodosService = useTodosActions()
 
   const handleConfirm = async () => {
-    TodosService.editTitle(id, newTitle)
+    TodosService.editTitle(id, inputTitle)
     setIsEditing(!isEditing)
-    setNewTitle(title)
+    setInputTitle(title)
   }
 
   const handleCancel = () => {
-    setNewTitle(title)
+    setInputTitle(title)
     setIsEditing(!isEditing)
   }
 
@@ -37,6 +37,10 @@ const TodoItem = ({ id, title, completed }: TodoItemProps) => {
     TodosService.remove(id)
   }
 
+  useEffect(() => {
+    if (title) setInputTitle(title)
+  }, [title])
+
   return (
     <li className="flex gap-4 justify-between w-full ">
       <div className="flex gap-2 items-center max-w-50 md:max-w-150">
@@ -51,8 +55,8 @@ const TodoItem = ({ id, title, completed }: TodoItemProps) => {
           <input
             type="text"
             className="ring-1 ring-gray-700 rounded-md p-1"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
+            value={inputTitle}
+            onChange={(e) => setInputTitle(e.target.value)}
           />
         ) : (
           <p
