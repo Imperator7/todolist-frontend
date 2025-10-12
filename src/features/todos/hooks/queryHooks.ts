@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { Todos, Todo } from '../schemas/todo'
+import type { Todos, Todo, ResultDeleteData } from '../schemas/todo'
 
 export type TodosDataCtx = {
   todos: Todos
@@ -10,7 +10,8 @@ export type TodosActionsCtx = {
   create: (title: string) => Promise<Todo>
   editTitle: (id: string, title: string) => Promise<Todo>
   toggleCompleted: (id: string) => Promise<Todo>
-  remove: (id: string) => Promise<void>
+  remove: (id: string) => Promise<ResultDeleteData>
+  isCreating: boolean
 }
 
 const initialDataState: TodosDataCtx = { todos: [], isPending: false }

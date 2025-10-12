@@ -183,6 +183,7 @@ export function TodosProvider({ children }: { children: ReactNode }) {
         editTitleMut.mutateAsync({ id, title }),
       toggleCompleted: (id: string) => toggleMut.mutateAsync(id),
       remove: (id: string) => removeMut.mutateAsync(id),
+      isCreating: createMut.isPending,
     }),
     [createMut, editTitleMut, toggleMut, removeMut]
   )
