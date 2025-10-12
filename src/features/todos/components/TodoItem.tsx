@@ -1,45 +1,39 @@
-import { useEffect, useState } from 'react'
-import type { Todo } from '../schemas/todo'
+import { useEffect, useRef, useState } from 'react'
 import { useTodosActions } from '../hooks/queryHooks'
 import { CiEdit } from 'react-icons/ci'
 import { RiDeleteBinFill, RiCheckFill, RiCloseFill } from 'react-icons/ri'
+import { useTodoById } from '../hooks/useTodoById'
 
-type TodoItemProps = Todo
-
+type TodoItemProps = { id: string }
 const ICON_SIZE = 20
 
-const TodoItem = ({ id, title, completed }: TodoItemProps) => {
+const TodoItem = ({ id }: TodoItemProps) => {
+  const { data: todo, isPending, isError } = useTodoById(id)
+
+  const { editTitle, toggleCompleted, remove } = useTodosActions()
+
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [inputTitle, setInputTitle] = useState<string>(title)
-
-  const TodosService = useTodosActions()
-
-  const handleConfirm = async () => {
-    TodosService.editTitle(id, inputTitle)
-    setIsEditing(!isEditing)
-    setInputTitle(title)
-  }
-
-  const handleCancel = () => {
-    setInputTitle(title)
-    setIsEditing(!isEditing)
-  }
-
-  const handleToggleEdit = () => {
-    setIsEditing(!isEditing)
-  }
-
-  const handleCheck = () => {
-    TodosService.toggleCompleted(id)
-  }
-
-  const handleDel = () => {
-    TodosService.remove(id)
-  }
+  const [inputTitle, setInputTitle] = useState<string>('')
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (title) setInputTitle(title)
-  }, [title])
+    if (todo?.title) setInputTitle(todo?.title)
+  }, [todo?.title])
+
+  useEffect(() => {
+    if (isEditing) {
+      requestAnimationFrame(() => {
+        inputRef.current?.focus()
+        inputRef.current?.select()
+      })
+    }
+  }, [isEditing])
+
+  if (isPending && !todo) return <li>fetching</li>
+  if (isError) return <li className="text-red-600">Failed to load this task</li>
+
+  const title = todo?.title
+  const completed = todo?.completed
 
   return (
     <li className="flex gap-4 justify-between w-full ">
@@ -49,6 +43,7 @@ const TodoItem = ({ id, title, completed }: TodoItemProps) => {
           name="completed"
           checked={completed}
           onChange={handleCheck}
+          ref={inputRef}
           className=" accent-amber-200 caret-transparent"
         />
         {isEditing ? (
@@ -90,5 +85,31 @@ const TodoItem = ({ id, title, completed }: TodoItemProps) => {
       )}
     </li>
   )
+
+  function handleConfirm() {
+    if (!title) return
+    editTitle(id, inputTitle.trim())
+    setInputTitle(title)
+    setIsEditing(false)
+  }
+
+  function handleCancel() {
+    if (!title) return
+    setInputTitle(title)
+    setIsEditing(false)
+  }
+
+  function handleToggleEdit() {
+    setIsEditing(true)
+  }
+
+  function handleCheck() {
+    toggleCompleted(id)
+  }
+
+  function handleDel() {
+    remove(id)
+  }
 }
+
 export default TodoItem
