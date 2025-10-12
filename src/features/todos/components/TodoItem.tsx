@@ -24,7 +24,6 @@ const TodoItem = ({ id }: TodoItemProps) => {
     if (isEditing) {
       requestAnimationFrame(() => {
         inputRef.current?.focus()
-        inputRef.current?.select()
       })
     }
   }, [isEditing])
@@ -43,7 +42,6 @@ const TodoItem = ({ id }: TodoItemProps) => {
           name="completed"
           checked={completed}
           onChange={handleCheck}
-          ref={inputRef}
           className=" accent-amber-200 caret-transparent"
         />
         {isEditing ? (
@@ -51,6 +49,7 @@ const TodoItem = ({ id }: TodoItemProps) => {
             type="text"
             className="ring-1 ring-gray-700 rounded-md p-1"
             value={inputTitle}
+            ref={inputRef}
             onChange={(e) => setInputTitle(e.target.value)}
           />
         ) : (
