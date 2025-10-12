@@ -1,16 +1,11 @@
-import { z, ZodType } from 'zod'
 import { HttpError } from './http.error'
 import { parseBody } from './http.parse'
 
 type JsonLike = Record<string, unknown> | unknown[] | null
 
-type RequestInitWithJsonBody = Omit<RequestInit, 'body'> & {
+export type HttpInit = Omit<RequestInit, 'body'> & {
   body?: BodyInit | JsonLike
   signal?: AbortSignal
-}
-
-export type HttpInit<T> = RequestInitWithJsonBody & {
-  schema?: ZodType<T>
   timeoutMs?: number
 }
 
@@ -42,7 +37,7 @@ function withTimeoutAbort(signal: AbortSignal | undefined, ms?: number) {
 
 export async function http<T>(
   url: RequestInfo | URL,
-  init: HttpInit<T> = {}
+  init: HttpInit = {}
 ): Promise<T> {
   const {
     headers,
@@ -50,7 +45,6 @@ export async function http<T>(
     body,
     timeoutMs = 8000,
     signal,
-    schema,
     ...rest
   } = init
 
@@ -81,15 +75,25 @@ export async function http<T>(
       ...rest,
     })
   } catch (e) {
-    clearAbortSignal()
-    throw new HttpError('Network error', { url: String(url), data: e })
+    throw new HttpError('Network error', {
+      url: String(url),
+      data: e,
+      code: 'NETWORK',
+      method,
+    })
   } finally {
     clearAbortSignal()
   }
 
   if ([204, 205, 304].includes(res.status)) {
-    if (!res.ok)
-      throw new HttpError(`HTTP ${res.status}`, { status: res.status })
+    if (!res.ok) {
+      throw new HttpError(`HTTP ${res.status}`, {
+        status: res.status,
+        url: res.url,
+        method,
+        code: 'HTTP',
+      })
+    }
 
     return null as T
   }
@@ -105,18 +109,13 @@ export async function http<T>(
       (typeof e === 'string' && e.trim() && e) ||
       (typeof d === 'string' && d.trim() && d) ||
       'Request failed'
-    throw new HttpError(msg, { status: res.status, url: res.url, data: parsed })
-  }
-
-  if (schema) {
-    const result = schema.safeParse(parsed)
-    if (!result.success) {
-      throw new HttpError('Response validation failed', {
-        status: res.status,
-        url: res.url,
-        data: z.treeifyError(result.error),
-      })
-    }
+    throw new HttpError(msg, {
+      status: res.status,
+      url: res.url,
+      data: parsed,
+      method,
+      code: 'SERVER',
+    })
   }
 
   return parsed as T

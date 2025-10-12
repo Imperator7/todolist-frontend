@@ -3,6 +3,7 @@ export class HttpError extends Error {
   data?: unknown
   url?: string
   method?: string
+  code?: 'TIMEOUT' | 'NETWORK' | 'HTTP' | 'ZOD_VALIDATION' | 'SERVER'
 
   constructor(msg: string, init?: Partial<HttpError>) {
     super(msg)
