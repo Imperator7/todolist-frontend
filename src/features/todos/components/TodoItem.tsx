@@ -51,6 +51,15 @@ const TodoItem = ({ id }: TodoItemProps) => {
             value={inputTitle}
             ref={inputRef}
             onChange={(e) => setInputTitle(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                handleConfirm()
+              } else if (e.key === 'Escape') {
+                e.preventDefault()
+                handleCancel()
+              }
+            }}
           />
         ) : (
           <p
