@@ -11,15 +11,28 @@ export type Todo = z.infer<typeof TodoSchema>
 export type Todos = Todo[]
 
 export const TodoCreateSchema = z.object({
-  title: z.string().trim().min(1, 'Title is required').max(20, 'Max 20 chars'),
+  title: z
+    .string()
+    .trim()
+    .min(1, 'Title is required')
+    .max(20, '20 characters max'),
 })
 export const TodoPatchSchema = z.object({
-  title: z.string().trim().min(1, "Title can't be blank").optional(),
+  title: z
+    .string()
+    .trim()
+    .min(1, "Title can't be blank")
+    .max(20, '20 characters max')
+    .optional(),
   toggleCompleted: z.literal(true).optional(),
+})
+export const ResultDeleteSchema = z.object({
+  deletedId: z.uuid(),
 })
 
 export type TodoCreateInput = z.infer<typeof TodoCreateSchema>
 export type TodoPatchInput = z.infer<typeof TodoPatchSchema>
+export type ResultDeleteData = z.infer<typeof ResultDeleteSchema>
 
 //Api
 export type ApiOk<T> = { ok: true; data: T }
