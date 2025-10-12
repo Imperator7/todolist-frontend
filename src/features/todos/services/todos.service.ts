@@ -1,43 +1,45 @@
-import type { ApiResult, Todo, Todos } from './../schemas/todo'
+import {
+  TodoCreateSchema,
+  TodosSchema,
+  TodoSchema,
+  type ApiResult,
+  type Todo,
+  type Todos,
+  TodoPatchSchema,
+  ResultDeleteSchema,
+  type ResultDeleteData,
+} from './../schemas/todo'
 import { get, post, patch, del } from '../../../lib/http/http.methods'
+import { unwrapResult } from '../../../lib/helper/unwrapResult'
 
 const BASE = '/api/todos'
 
 export const TodosService = {
   list: async (): Promise<Todos> => {
     const res = await get<ApiResult<Todos>>(BASE)
-    if (!res.ok) {
-      throw new Error(res.error)
-    }
-    return res.data
+    return unwrapResult(res, TodosSchema)
   },
   create: async (title: string): Promise<Todo> => {
-    const res = await post<ApiResult<Todo>>(BASE, { body: { title } })
-    if (!res.ok) {
-      throw new Error(res.error)
-    }
-    return res.data
+    const parsed = TodoCreateSchema.parse({ title })
+    const res = await post<ApiResult<Todo>>(BASE, { body: { ...parsed } })
+    return unwrapResult(res, TodoSchema)
   },
   editTitle: async (id: string, title: string): Promise<Todo> => {
+    const parsed = TodoPatchSchema.parse({ title })
     const res = await patch<ApiResult<Todo>>(`${BASE}/${id}`, {
-      body: { title },
+      body: { ...parsed },
     })
-    if (!res.ok) {
-      throw new Error(res.error)
-    }
-    return res.data
+    return unwrapResult(res, TodoSchema)
   },
   toggleCompleted: async (id: string): Promise<Todo> => {
+    const parsed = TodoPatchSchema.parse({ toggleCompleted: true })
     const res = await patch<ApiResult<Todo>>(`${BASE}/${id}`, {
-      body: { toggleCompleted: true },
+      body: { ...parsed },
     })
-    if (!res.ok) {
-      throw new Error(res.error)
-    }
-    return res.data
+    return unwrapResult(res, TodoSchema)
   },
-  remove: async (id: string): Promise<void> => {
-    const res = await del<ApiResult<{ deleteId: string }>>(`${BASE}/${id}`)
-    if (!res.ok) throw new Error(res.error)
+  remove: async (id: string): Promise<ResultDeleteData> => {
+    const res = await del<ApiResult<ResultDeleteData>>(`${BASE}/${id}`)
+    return unwrapResult(res, ResultDeleteSchema)
   },
 }
