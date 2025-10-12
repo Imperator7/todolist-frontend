@@ -1,15 +1,18 @@
-import type { Todos } from '../schemas/todo'
+import { useTodoLength } from '../hooks/useTodoLength'
 
-type TodoHeaderProps = {
-  todos: Todos
-}
+const TodoHeader = () => {
+  const { data: todosLength = 0 } = useTodoLength()
 
-const TodoHeader = ({ todos }: TodoHeaderProps) => {
   return (
     <h1 className="font-bold">
       <span>Task List</span>
-      <span className={['text-gray-500', 'caret-transparent'].join(' ')}>
-        : {todos.length} tasks
+      <span
+        className={[
+          'text-gray-500 caret-transparent',
+          todosLength === 0 && 'text-transparent',
+        ].join(' ')}
+      >
+        : {todosLength} tasks
       </span>
     </h1>
   )

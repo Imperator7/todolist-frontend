@@ -1,25 +1,19 @@
-import type { Todos } from '../schemas/todo'
 import TodoItem from './TodoItem'
+import { useTodosData } from '../hooks/queryHooks'
 
-type TodoListProps = {
-  todos: Todos
-  isLoading: boolean
-}
+const TodoList = () => {
+  const { todos, isPending } = useTodosData()
 
-const TodoList = ({ todos, isLoading }: TodoListProps) => {
+  if (isPending) return <p>Loading.....</p>
+  if (todos.length === 0) return <p>No task left</p>
+
   return (
     <>
-      {isLoading ? (
-        <p>Loading.....</p>
-      ) : todos.length === 0 ? (
-        <p>No task left</p>
-      ) : (
-        <ul className="flex flex-col gap-2 overflow-y-auto pr-2 max-h-[75vh]">
-          {todos.map((todo) => (
-            <TodoItem key={todo.id} {...todo} />
-          ))}
-        </ul>
-      )}
+      <ul className="flex flex-col gap-2 overflow-y-auto pr-2 max-h-[75vh]">
+        {todos.map((todo) => (
+          <TodoItem key={todo.id} id={todo.id} />
+        ))}
+      </ul>
     </>
   )
 }
