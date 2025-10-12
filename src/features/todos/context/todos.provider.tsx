@@ -14,7 +14,7 @@ import type { Todo, Todos } from '../schemas/todo'
 export function TodosProvider({ children }: { children: ReactNode }) {
   const qc = useQueryClient()
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: TODOS_QK,
     queryFn: () => TodosService.list(),
   })
@@ -171,9 +171,9 @@ export function TodosProvider({ children }: { children: ReactNode }) {
   const value: TodosDataCtx = useMemo(
     () => ({
       todos: data ?? [],
-      isLoading,
+      isPending,
     }),
-    [data, isLoading]
+    [data, isPending]
   )
 
   const actions: TodosActionsCtx = useMemo(

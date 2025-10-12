@@ -3,7 +3,7 @@ import type { Todos, Todo } from '../schemas/todo'
 
 export type TodosDataCtx = {
   todos: Todos
-  isLoading: boolean
+  isPending: boolean
 }
 
 export type TodosActionsCtx = {
@@ -13,7 +13,7 @@ export type TodosActionsCtx = {
   remove: (id: string) => Promise<void>
 }
 
-const initialDataState: TodosDataCtx = { todos: [], isLoading: false }
+const initialDataState: TodosDataCtx = { todos: [], isPending: false }
 
 export const DataCtx = createContext<TodosDataCtx>(initialDataState)
 export const ActionsCtx = createContext<TodosActionsCtx | null>(null)
