@@ -14,6 +14,8 @@ const TodoItem = ({ id }: TodoItemProps) => {
 
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [inputTitle, setInputTitle] = useState<string>('')
+  const [focused, setFocused] = useState<boolean>(false)
+  const [touched, setTouched] = useState<boolean>(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -34,6 +36,8 @@ const TodoItem = ({ id }: TodoItemProps) => {
   const title = todo?.title
   const completed = todo?.completed
 
+  const isValid = inputTitle.length !== 0 && inputTitle.length <= 20
+
   return (
     <li className="flex gap-4 justify-between w-full ">
       <div className="flex gap-2 items-center max-w-50 md:max-w-150">
@@ -45,22 +49,51 @@ const TodoItem = ({ id }: TodoItemProps) => {
           className=" accent-amber-200 caret-transparent"
         />
         {isEditing ? (
-          <input
-            type="text"
-            className="ring-1 ring-gray-700 rounded-md p-1"
-            value={inputTitle}
-            ref={inputRef}
-            onChange={(e) => setInputTitle(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                handleConfirm()
-              } else if (e.key === 'Escape') {
-                e.preventDefault()
-                handleCancel()
-              }
-            }}
-          />
+          <div className="relative">
+            <input
+              type="text"
+              className={[
+                'ring-1 ring-gray-700 rounded-md p-1',
+                !isValid && 'ring-2 ring-red-500',
+              ].join(' ')}
+              value={inputTitle}
+              ref={inputRef}
+              onFocus={() => {
+                setTouched(true)
+                setFocused(true)
+              }}
+              onBlur={() => setFocused(false)}
+              onChange={(e) => setInputTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  if (!isValid) return
+                  handleConfirm()
+                } else if (e.key === 'Escape') {
+                  e.preventDefault()
+                  handleCancel()
+                }
+              }}
+            />
+            <span
+              className={[
+                'text-[0.7rem] tabular-nums text-gray-500 select-none',
+                'absolute right-2 -top-2 bg-white px-0.5',
+              ].join(' ')}
+            >
+              <span
+                className={[
+                  touched && inputTitle.length > 20 && 'text-red-400',
+                  focused && inputTitle.length === 0 && 'text-amber-400',
+                ].join(' ')}
+              >
+                {inputTitle.length < 10
+                  ? '0' + inputTitle.length
+                  : inputTitle.length}
+              </span>
+              |20
+            </span>
+          </div>
         ) : (
           <p
             className={[
@@ -74,7 +107,11 @@ const TodoItem = ({ id }: TodoItemProps) => {
       </div>
       {isEditing ? (
         <div className="flex gap-1 md:gap-4 items-center">
-          <button className="btn bg-green-600" onClick={handleConfirm}>
+          <button
+            className="btn bg-green-600 disabled:opacity-60"
+            onClick={handleConfirm}
+            disabled={!isValid}
+          >
             <RiCheckFill size={ICON_SIZE} />
           </button>
           <button className="btn bg-red-600" onClick={handleCancel}>
@@ -96,6 +133,7 @@ const TodoItem = ({ id }: TodoItemProps) => {
 
   function handleConfirm() {
     if (!title) return
+    if (!isValid) return
     editTitle(id, inputTitle.trim())
     setInputTitle(title)
     setIsEditing(false)

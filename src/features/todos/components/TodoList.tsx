@@ -9,7 +9,7 @@ const TodoList = () => {
 
   return (
     <>
-      <ul className="flex flex-col gap-2 overflow-y-auto pr-2 max-h-[75vh]">
+      <ul className="flex flex-col gap-2 overflow-y-auto pt-0.5 pr-2 max-h-[75vh]">
         {todos.map((todo) => (
           <TodoItem key={todo.id} id={todo.id} />
         ))}
