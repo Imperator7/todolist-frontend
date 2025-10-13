@@ -50,6 +50,18 @@ export const handlers = [
       )
     }
 
+    const maxChar = 20
+
+    if (title.length > maxChar) {
+      return HttpResponse.json(
+        {
+          ok: false,
+          error: `Title must be at most ${maxChar} characters`,
+        },
+        { status: 422 }
+      )
+    }
+
     const item: Todo = {
       id: crypto.randomUUID(),
       title: title,
