@@ -17,6 +17,7 @@ A simple **Todo List** application built with **React + TypeScript + Vite**, usi
 - **React Query** for fetching and mutations
 - **Context API** for data & actions (no prop drilling)
 - **MSW** (Mock Service Worker) simulates backend endpoints
+- **Sonner** for beautiful toast notification
 
 ---
 
@@ -38,6 +39,7 @@ MSW is automatically initialized on startup (no `.env` setup required).
 - **TanStack Query (React Query)** — Server state management
 - **React Context API** — Share data/actions across components
 - **MSW (Mock Service Worker)** — Network-level API mocking
+- **Sonner (shadcn)** — Beautifully designed components
 
 ---
 
