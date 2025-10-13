@@ -24,7 +24,7 @@ const AddTodoInput = () => {
 
   return (
     <form onSubmit={handleAdd} className="flex flex-wrap gap-4 ">
-      <div className="relative">
+      <div className="relative flex items-center">
         <input
           type="text"
           placeholder="Add new task here"

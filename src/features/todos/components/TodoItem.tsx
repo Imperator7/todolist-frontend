@@ -101,10 +101,7 @@ const TodoItem = ({ id }: TodoItemProps) => {
       </div>
       {isEditing ? (
         <div className="flex gap-1 md:gap-4 items-center">
-          <button
-            className="btn bg-green-600 disabled:opacity-60"
-            onClick={handleConfirm}
-          >
+          <button className="btn bg-green-600" onClick={handleConfirm}>
             <RiCheckFill size={ICON_SIZE} />
           </button>
           <button className="btn bg-red-600" onClick={handleCancel}>

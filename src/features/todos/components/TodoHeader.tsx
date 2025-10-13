@@ -9,7 +9,7 @@ const TodoHeader = () => {
       <span
         className={[
           'text-gray-500 caret-transparent',
-          todosLength === 0 && 'text-transparent',
+          todosLength === 0 && 'hidden',
         ].join(' ')}
       >
         : {todosLength} tasks

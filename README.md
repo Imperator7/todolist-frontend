@@ -36,10 +36,10 @@ MSW is automatically initialized on startup (no `.env` setup required).
 ## 📦 Tech Stack
 
 - **React + TypeScript** — UI & type safety
+- **Zod** — Schema validation + runtime type safety
 - **TanStack Query (React Query)** — Server state management
-- **React Context API** — Share data/actions across components
 - **MSW (Mock Service Worker)** — Network-level API mocking
-- **Sonner (shadcn)** — Beautifully designed components
+- **Sonner (shadcn)** — Toast notifications
 
 ---
 
