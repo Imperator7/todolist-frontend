@@ -15,14 +15,14 @@ export const TodoCreateSchema = z.object({
     .string()
     .trim()
     .min(1, 'Title is required')
-    .max(20, '20 characters max'),
+    .max(20, 'Title must not exceed 20 characters.'),
 })
 export const TodoPatchSchema = z.object({
   title: z
     .string()
     .trim()
     .min(1, "Title can't be blank")
-    .max(20, '20 characters max')
+    .max(20, 'Title must not exceed 20 characters.')
     .optional(),
   toggleCompleted: z.literal(true).optional(),
 })
