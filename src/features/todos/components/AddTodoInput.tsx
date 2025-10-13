@@ -8,21 +8,17 @@ const AddTodoInput = () => {
   const [touched, setTouched] = useState<boolean>(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const isValid = newTodo.length !== 0 && newTodo.length <= 20
-
-  const { create, isCreating } = useTodosActions()
+  const { create } = useTodosActions()
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    if (!isValid) return
 
     try {
       await create(newTodo)
       setNewTodo('')
       setTouched(false)
-    } catch (err) {
-      console.log(err)
+    } catch {
+      return
     }
   }
 
@@ -70,11 +66,7 @@ const AddTodoInput = () => {
           |20
         </span>
       </div>
-      <button
-        className="btn bg-amber-400 disabled:opacity-40"
-        type="submit"
-        disabled={isCreating || !isValid}
-      >
+      <button className="btn bg-amber-400" type="submit">
         <IoMdAdd size={20} />
       </button>
     </form>

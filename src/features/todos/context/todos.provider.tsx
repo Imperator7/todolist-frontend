@@ -10,6 +10,7 @@ import {
 import { TodosService } from '../services/todos.service'
 import { TODOS_QK } from '../queryKeys'
 import type { Todo, Todos } from '../schemas/todo'
+import { toast } from 'sonner'
 
 export function TodosProvider({ children }: { children: ReactNode }) {
   const qc = useQueryClient()
@@ -44,8 +45,9 @@ export function TodosProvider({ children }: { children: ReactNode }) {
       return { prev, tempId }
     },
 
-    onError(_err, _vars, ctx) {
+    onError(err, _vars, ctx) {
       if (ctx?.prev) qc.setQueryData(TODOS_QK, ctx.prev)
+      toast.error(err.message)
     },
 
     onSuccess(real, _vars, ctx) {
@@ -53,6 +55,7 @@ export function TodosProvider({ children }: { children: ReactNode }) {
       qc.setQueryData<Todos>(TODOS_QK, (curr) =>
         curr ? curr.map((t) => (t.id === ctx.tempId ? real : t)) : curr
       )
+      toast.success('Created')
     },
 
     onSettled() {
@@ -83,7 +86,9 @@ export function TodosProvider({ children }: { children: ReactNode }) {
       return { prev, id, opId }
     },
 
-    onError(_err, _vars, ctx) {
+    onError(err, _vars, ctx) {
+      toast.error(err.message)
+
       if (!ctx) return
 
       if (latestOpRef.current.get(ctx.id) === ctx.opId) return
@@ -110,6 +115,7 @@ export function TodosProvider({ children }: { children: ReactNode }) {
       if (latestOpRef.current.get(ctx.id) === ctx.opId) {
         qc.setQueryData<Todos>(TODOS_QK, (curr) => replaceById(curr, todo))
       }
+      toast.success('Edited')
     },
 
     onSettled(_data, _err, _vars, ctx) {
@@ -165,6 +171,7 @@ export function TodosProvider({ children }: { children: ReactNode }) {
 
     onSettled() {
       qc.invalidateQueries({ queryKey: TODOS_QK })
+      toast.success('Removed 🗑️')
     },
   })
 
