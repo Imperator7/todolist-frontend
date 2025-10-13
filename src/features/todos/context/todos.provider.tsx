@@ -55,7 +55,7 @@ export function TodosProvider({ children }: { children: ReactNode }) {
       qc.setQueryData<Todos>(TODOS_QK, (curr) =>
         curr ? curr.map((t) => (t.id === ctx.tempId ? real : t)) : curr
       )
-      toast.success('Created')
+      toast.success('Created successfully')
     },
 
     onSettled() {
@@ -91,7 +91,7 @@ export function TodosProvider({ children }: { children: ReactNode }) {
 
       if (!ctx) return
 
-      if (latestOpRef.current.get(ctx.id) === ctx.opId) return
+      if (!(latestOpRef.current.get(ctx.id) === ctx.opId)) return
 
       const lastOk = lastSuccessRef.current.get(ctx.id)
 
@@ -115,7 +115,7 @@ export function TodosProvider({ children }: { children: ReactNode }) {
       if (latestOpRef.current.get(ctx.id) === ctx.opId) {
         qc.setQueryData<Todos>(TODOS_QK, (curr) => replaceById(curr, todo))
       }
-      toast.success('Edited')
+      toast.success('Edited successfully')
     },
 
     onSettled(_data, _err, _vars, ctx) {
