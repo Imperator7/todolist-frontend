@@ -11,6 +11,7 @@ import {
 } from './../schemas/todo'
 import { get, post, patch, del } from '../../../lib/http/http.methods'
 import { unwrapResult } from '../../../lib/helper/unwrapResult'
+import { firstMessage } from '../../../lib/helper/validation'
 
 const BASE = '/api/todos'
 
@@ -20,14 +21,20 @@ export const TodosService = {
     return unwrapResult(res, TodosSchema)
   },
   create: async (title: string): Promise<Todo> => {
-    const parsed = TodoCreateSchema.parse({ title })
-    const res = await post<ApiResult<Todo>>(BASE, { body: { ...parsed } })
+    const parsed = TodoCreateSchema.safeParse({ title })
+    if (!parsed.success) {
+      throw Error(firstMessage(parsed.error))
+    }
+    const res = await post<ApiResult<Todo>>(BASE, { body: { ...parsed.data } })
     return unwrapResult(res, TodoSchema)
   },
   editTitle: async (id: string, title: string): Promise<Todo> => {
-    const parsed = TodoPatchSchema.parse({ title })
+    const parsed = TodoPatchSchema.safeParse({ title })
+    if (!parsed.success) {
+      throw Error(firstMessage(parsed.error))
+    }
     const res = await patch<ApiResult<Todo>>(`${BASE}/${id}`, {
-      body: { ...parsed },
+      body: { ...parsed.data },
     })
     return unwrapResult(res, TodoSchema)
   },
