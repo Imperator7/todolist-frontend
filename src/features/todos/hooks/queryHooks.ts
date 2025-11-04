@@ -14,9 +14,7 @@ export type TodosActionsCtx = {
   isCreating: boolean
 }
 
-const initialDataState: TodosDataCtx = { todos: [], isPending: false }
-
-export const DataCtx = createContext<TodosDataCtx>(initialDataState)
+export const DataCtx = createContext<TodosDataCtx | null>(null)
 export const ActionsCtx = createContext<TodosActionsCtx | null>(null)
 
 export function useTodosData() {
@@ -24,6 +22,7 @@ export function useTodosData() {
   if (!ctx) throw new Error('useTodosData must be used within TodosProvider')
   return ctx
 }
+
 export function useTodosActions() {
   const ctx = useContext(ActionsCtx)
   if (!ctx) throw new Error('useTodosActions must be used within TodosProvider')
