@@ -56,6 +56,7 @@ const AddTodoInput = () => {
           ].join(' ')}
         >
           <span
+            data-testid="char-counter"
             className={[
               touched && newTodo.length > 20 && 'text-red-400',
               focused && newTodo.length === 0 && 'text-amber-400',
@@ -66,7 +67,11 @@ const AddTodoInput = () => {
           |20
         </span>
       </div>
-      <button className="btn bg-amber-400" type="submit">
+      <button
+        aria-label="submit add to do"
+        className="btn bg-amber-400"
+        type="submit"
+      >
         <IoMdAdd size={20} />
       </button>
     </form>
