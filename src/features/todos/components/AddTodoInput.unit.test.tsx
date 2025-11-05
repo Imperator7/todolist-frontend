@@ -25,6 +25,24 @@ describe('Test AddTodoInput component', () => {
     ).toBeInTheDocument()
   })
 
+  it('does not submit when empty', async () => {
+    createMock.mockResolvedValueOnce(undefined)
+
+    const input = screen.getByPlaceholderText(/Add new task here/i)
+    await user.click(input)
+    await user.keyboard('{Enter}')
+    expect(createMock).not.toHaveBeenCalled()
+  })
+
+  it('does not submit when it exceed maximum character', async () => {
+    createMock.mockRejectedValueOnce(undefined)
+    const input = screen.getByPlaceholderText(/Add new task here/i)
+    await user.click(input)
+    await user.paste('a'.repeat(21))
+    await user.keyboard('{Enter}')
+    expect(createMock).not.toHaveBeenCalled()
+  })
+
   it('updates value and counter when typing', async () => {
     const input = screen.getByPlaceholderText(/Add new task here/i)
 
@@ -45,6 +63,7 @@ describe('Test AddTodoInput component', () => {
     await user.click(input)
     expect(screen.getByText('00')).toHaveClass('text-amber-400')
   })
+
   it('focused & length > 20: counter has red color with 31 characters', async () => {
     const input = screen.getByPlaceholderText(/Add new task here/i)
     await user.click(input)
@@ -54,6 +73,20 @@ describe('Test AddTodoInput component', () => {
     expect(counter).toHaveClass('text-red-400')
     expect(input).toHaveClass('ring-2', 'ring-red-600')
   })
+
+  it('touched & length > 20: input has red outline and counter has red color with exceed characters after touched', async () => {
+    const input = screen.getByPlaceholderText(/Add new task here/i)
+    const charCounter = screen.getByTestId('char-counter')
+
+    await user.click(input)
+    await user.paste('a'.repeat(21))
+    await user.keyboard('{Escape}')
+
+    expect(charCounter).toHaveTextContent('21')
+    expect(charCounter).toHaveClass('text-red-400')
+    expect(input).toHaveClass('ring-red-600')
+  })
+
   it('Escape blurs the input', async () => {
     const input = screen.getByPlaceholderText(/Add new task here/i)
     await user.click(input)
@@ -62,6 +95,7 @@ describe('Test AddTodoInput component', () => {
     await user.keyboard('{Escape}')
     expect(input).not.toHaveFocus()
   })
+
   it('can Enter to submits the input and resets value', async () => {
     createMock.mockResolvedValueOnce(undefined)
 
@@ -77,6 +111,7 @@ describe('Test AddTodoInput component', () => {
     expect(input).toHaveValue('')
     expect(screen.getByTestId('char-counter')).toHaveTextContent('00')
   })
+
   it('can Click + button to submit the input and reset value', async () => {
     createMock.mockResolvedValueOnce(undefined)
 
