@@ -69,7 +69,8 @@ const AddTodoInput = () => {
       </div>
       <button
         aria-label="submit add to do"
-        className="btn bg-amber-400"
+        className="btn bg-amber-400 disabled:bg-amber-300"
+        disabled={newTodo.length === 0 || newTodo.length > 20}
         type="submit"
       >
         <IoMdAdd size={20} />
