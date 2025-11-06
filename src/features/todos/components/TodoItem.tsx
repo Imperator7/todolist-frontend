@@ -101,19 +101,35 @@ const TodoItem = ({ id }: TodoItemProps) => {
       </div>
       {isEditing ? (
         <div className="flex gap-1 md:gap-4 items-center">
-          <button className="btn bg-green-600" onClick={handleConfirm}>
+          <button
+            aria-label="confirm-edit"
+            className="btn bg-green-600"
+            onClick={handleConfirm}
+          >
             <RiCheckFill size={ICON_SIZE} />
           </button>
-          <button className="btn bg-red-600" onClick={handleCancel}>
+          <button
+            aria-label="cancel-edit"
+            className="btn bg-red-600"
+            onClick={handleCancel}
+          >
             <RiCloseFill size={ICON_SIZE} />
           </button>
         </div>
       ) : (
         <div className="flex gap-1 md:gap-4 items-center">
-          <button className="btn bg-blue-600" onClick={handleToggleEdit}>
+          <button
+            aria-label="edit-task"
+            className="btn bg-blue-600"
+            onClick={handleToggleEdit}
+          >
             <CiEdit size={ICON_SIZE} />
           </button>
-          <button className="btn bg-red-600" onClick={handleDel}>
+          <button
+            aria-label="delete-task"
+            className="btn bg-red-600"
+            onClick={handleDel}
+          >
             <RiDeleteBinFill size={ICON_SIZE} />
           </button>
         </div>
