@@ -6,23 +6,19 @@ import type {
   Todos,
 } from '../features/todos/schemas/todo'
 
-export const makeHandlers = () => {
-  let todos: Todos = [
-    {
-      id: crypto.randomUUID(),
-      title: 'finish the job',
-      completed: false,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: 'send the application',
-      completed: true,
-    },
-  ]
+type HandlersFactory = {
+  initialTodos?: Todos
+  delayMs?: number
+}
+
+export const makeHandlers = (opts: Partial<HandlersFactory> = {}) => {
+  let todos: Todos = opts.initialTodos ?? []
+
+  const delayMs = opts.delayMs ?? 0
 
   return [
     http.get('/api/todos', async () => {
-      await delay(200)
+      await delay(delayMs)
       return HttpResponse.json({ ok: true, data: todos }, { status: 200 })
     }),
 
@@ -39,7 +35,7 @@ export const makeHandlers = () => {
     }),
 
     http.post('/api/todos', async ({ request }) => {
-      await delay(200)
+      await delay(delayMs)
       const body: TodoCreateInput = (await request.json()) as TodoCreateInput
       const title = body.title
 
@@ -81,7 +77,7 @@ export const makeHandlers = () => {
     }),
 
     http.patch('/api/todos/:id', async ({ request, params }) => {
-      await delay(200)
+      await delay(delayMs)
       const id = params.id
       const targetTodo = todos.find((todo) => todo.id === id)
 
@@ -121,7 +117,7 @@ export const makeHandlers = () => {
     }),
 
     http.delete('/api/todos/:id', async ({ params }) => {
-      await delay(200)
+      await delay(delayMs)
       const id = params.id
 
       const before = todos.length
