@@ -143,8 +143,8 @@ describe('Integration test: Todo layout', () => {
       )
     }
 
-    await addTodo('work out')
-    await addTodo('eat out')
+    await waitFor(() => addTodo('work out'))
+    await waitFor(() => addTodo('eat out'))
 
     const todos = await screen.findAllByRole('listitem')
     expect(todos).toHaveLength(2)
@@ -195,8 +195,8 @@ describe('Integration test: Todo layout', () => {
       await screen.findByText(new RegExp(title, 'i'))
     }
 
-    await addTodo('finish the job')
-    await addTodo('send the application')
+    await waitFor(() => addTodo('finish the job'))
+    await waitFor(() => addTodo('send the application'))
 
     await waitFor(() => {
       expect(screen.getByText(/finish the job/i)).toBeInTheDocument()
