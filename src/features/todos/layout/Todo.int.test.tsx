@@ -138,7 +138,9 @@ describe('Integration test: Todo layout', () => {
       await user.paste(title)
       await user.click(submitBtn)
 
-      await screen.findByText(new RegExp(title, 'i'))
+      await waitFor(() =>
+        expect(screen.getByText(new RegExp(title, 'i'))).toBeInTheDocument()
+      )
     }
 
     await addTodo('work out')
@@ -196,16 +198,20 @@ describe('Integration test: Todo layout', () => {
     await addTodo('finish the job')
     await addTodo('send the application')
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByText(/finish the job/i)).toBeInTheDocument()
+    })
+
+    await waitFor(() => {
       expect(screen.getByText(/send the application/i)).toBeInTheDocument()
     })
 
-    const editBtn = screen.getAllByRole('button', { name: /edit-task/i })
+    const editBtns = screen.getAllByRole('button', { name: /edit-task/i })
+    expect(editBtns).toHaveLength(2)
 
     expect(screen.getByTestId('todo-counter')).toHaveTextContent(': 2 tasks')
 
-    await user.click(editBtn[0])
+    await user.click(editBtns[0])
     const editInput = screen.getByDisplayValue(/finish the job/i)
     expect(editInput).toBeInTheDocument()
 
