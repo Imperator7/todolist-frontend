@@ -192,7 +192,9 @@ describe('Integration test: Todo layout', () => {
       await user.paste(title)
       await user.click(submitBtn)
 
-      await screen.findByText(new RegExp(title, 'i'))
+      await waitFor(() =>
+        expect(screen.getByText(new RegExp(title, 'i'))).toBeInTheDocument()
+      )
     }
 
     await waitFor(() => addTodo('finish the job'))
