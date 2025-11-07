@@ -58,7 +58,7 @@ describe('Integration test: Todo layout', () => {
   })
 
   it('loads and query from react query successfully', async () => {
-    const loading = screen.getByText('loading..')
+    const loading = screen.getByText(/loading.../i)
     expect(loading).toBeInTheDocument()
 
     await waitForElementToBeRemoved(() => screen.queryByText(/loading/i))
