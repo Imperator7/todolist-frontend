@@ -143,8 +143,8 @@ describe('Integration test: Todo layout', () => {
       )
     }
 
-    await waitFor(() => addTodo('work out'))
-    await waitFor(() => addTodo('eat out'))
+    await addTodo('work out')
+    await addTodo('eat out')
 
     const todos = await screen.findAllByRole('listitem')
     expect(todos).toHaveLength(2)
@@ -197,16 +197,8 @@ describe('Integration test: Todo layout', () => {
       )
     }
 
-    await waitFor(() => addTodo('finish the job'))
-    await waitFor(() => addTodo('send the application'))
-
-    await waitFor(() => {
-      expect(screen.getByText(/finish the job/i)).toBeInTheDocument()
-    })
-
-    await waitFor(() => {
-      expect(screen.getByText(/send the application/i)).toBeInTheDocument()
-    })
+    await addTodo('finish the job')
+    await addTodo('send the application')
 
     const editBtns = screen.getAllByRole('button', { name: /edit-task/i })
     expect(editBtns).toHaveLength(2)
@@ -224,7 +216,9 @@ describe('Integration test: Todo layout', () => {
 
     await user.click(confirmBtn)
 
-    expect(screen.queryByText(/finish the job/i)).not.toBeInTheDocument()
-    expect(screen.getByText(/polish the work/i)).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByText(/finish the job/i)).not.toBeInTheDocument()
+      expect(screen.getByText(/polish the work/i)).toBeInTheDocument()
+    })
   })
 })
