@@ -138,9 +138,13 @@ describe('Integration test: Todo layout', () => {
       await user.paste(title)
       await user.click(submitBtn)
 
-      await waitFor(() =>
-        expect(screen.getByText(new RegExp(title, 'i'))).toBeInTheDocument()
-      )
+      await waitFor(() => {
+        expect(input).toHaveValue('')
+      })
+
+      expect(
+        await screen.findByText(new RegExp(title, 'i'))
+      ).toBeInTheDocument()
     }
 
     await addTodo('work out')
@@ -192,9 +196,13 @@ describe('Integration test: Todo layout', () => {
       await user.paste(title)
       await user.click(submitBtn)
 
-      await waitFor(() =>
-        expect(screen.getByText(new RegExp(title, 'i'))).toBeInTheDocument()
-      )
+      await waitFor(() => {
+        expect(input).toHaveValue('')
+      })
+
+      expect(
+        await screen.findByText(new RegExp(title, 'i'))
+      ).toBeInTheDocument()
     }
 
     await addTodo('finish the job')
@@ -216,9 +224,10 @@ describe('Integration test: Todo layout', () => {
 
     await user.click(confirmBtn)
 
+    expect(await screen.findByText(/polish the work/i)).toBeInTheDocument()
+
     await waitFor(() => {
       expect(screen.queryByText(/finish the job/i)).not.toBeInTheDocument()
-      expect(screen.getByText(/polish the work/i)).toBeInTheDocument()
     })
   })
 })
